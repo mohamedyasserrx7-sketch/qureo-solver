@@ -5,8 +5,25 @@ const{chromium}=require('playwright-core');
 const app=express();
 const server=http.createServer(app);
 const wss=new WebSocketServer({server});
+const SITE_PASSWORD='1q2w3e4r5t6y7u8i9o0p';
 app.use(express.json());
+app.use((req,res,next)=>{
+if(req.path==='/api/auth'||req.path==='/login.html')return next();
+const auth=req.headers['x-site-auth'];
+if(auth===SITE_PASSWORD)return next();
+if(req.path==='/'||req.path==='/index.html'){
+return res.sendFile(__dirname+'/public/login.html');
+}
+res.status(401).json({error:'غير مصرح'});
+});
 app.use(express.static('public'));
+app.post('/api/auth',(req,res)=>{
+if(req.body.password===SITE_PASSWORD){
+res.json({ok:true,token:SITE_PASSWORD});
+}else{
+res.status(401).json({error:'كلمة السر غلط'});
+}
+});
 let browser=null,page=null,running=false,clients=new Set();
 function broadcast(d){const m=JSON.stringify(d);clients.forEach(c=>{if(c.readyState===1)c.send(m);})}
 function log(t,type='info'){broadcast({type:'log',text:t,logType:type,ts:new Date().toLocaleTimeString('ar-EG')})}
