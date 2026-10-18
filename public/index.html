@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>QUREO Solver</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#0d0d0d;--card:#111;--b:#1e1e1e;--green:#a3e635;--pink:#f43f5e;--text:#e2e8f0;--muted:#64748b;--inp:#181818}
+body{background:var(--bg);color:var(--text);font-family:'Segoe UI',sans-serif;padding:16px;min-height:100vh}
+.hdr{text-align:center;margin-bottom:18px}
+.hdr h1{font-size:22px;font-weight:900;letter-spacing:3px;color:var(--green)}
+.hdr p{font-size:10px;color:var(--muted);letter-spacing:4px;margin-top:4px}
+.card{background:var(--card);border:1px solid var(--b);border-radius:16px;padding:18px;margin-bottom:12px}
+.card-title{font-size:11px;color:var(--muted);letter-spacing:2px;text-transform:uppercase;margin-bottom:14px}
+.status-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.dot-wrap{display:flex;align-items:center;gap:8px}
+.dot{width:10px;height:10px;border-radius:50%;background:var(--pink);transition:background .3s}
+.dot.ready{background:#38bdf8}.dot.running{background:var(--green);animation:pulse .7s infinite alternate}.dot.done{background:var(--green)}
+@keyframes pulse{to{opacity:.3}}
+.dot-label{font-size:12px;color:var(--muted)}
+.badge{font-size:12px;padding:4px 14px;border-radius:20px;background:#1a1a1a;color:var(--muted);letter-spacing:1px;border:1px solid #222;transition:all .3s}
+.badge.running{color:var(--green);border-color:#a3e63544}.badge.done{color:var(--green)}.badge.error{color:var(--pink)}
+.prog-labels{display:flex;justify-content:space-between;font-size:12px;color:var(--muted);margin-bottom:8px}
+.prog-track{width:100%;height:6px;background:#1e1e1e;border-radius:3px;overflow:hidden}
+.prog-fill{height:100%;background:linear-gradient(90deg,var(--green),#65a30d);border-radius:3px;width:0%;transition:width .5s}
+.pct{font-size:36px;font-weight:900;color:var(--green);text-align:center;margin-top:10px}
+label{display:block;font-size:11px;color:var(--muted);letter-spacing:1px;margin-bottom:6px;margin-top:14px}
+input,select{width:100%;padding:12px 14px;background:var(--inp);border:1px solid #222;border-radius:10px;color:var(--text);font-size:14px;outline:none;transition:border .15s;-webkit-appearance:none;font-family:inherit}
+input:focus,select:focus{border-color:var(--green)}
+select option{background:#181818}
+.btn-solve{margin-top:18px;width:100%;padding:15px;background:var(--green);border:none;border-radius:12px;color:#000;font-size:16px;font-weight:900;cursor:pointer;letter-spacing:1px;font-family:inherit}
+.btn-solve:disabled{background:#1e1e1e;color:#334155;cursor:not-allowed}
+.btn-stop{margin-top:10px;width:100%;padding:11px;background:transparent;border:1px solid var(--pink);border-radius:10px;color:var(--pink);font-size:13px;cursor:pointer;display:none;font-family:inherit}
+.btn-stop.show{display:block}
+.log-box{background:#0a0a0a;border:1px solid #1a1a1a;border-radius:10px;padding:12px;height:210px;overflow-y:auto;font-size:12px;font-family:monospace;direction:rtl}
+.ll{margin-bottom:7px;display:flex;gap:8px}
+.ts{color:#2a3a4a;white-space:nowrap;font-size:11px}
+.lt.info{color:#475569}.lt.success{color:var(--green)}.lt.warn{color:#fbbf24}.lt.error{color:var(--pink)}
+.footer{text-align:center;font-size:10px;color:#1e1e1e;letter-spacing:4px;margin-top:16px}
+</style>
+</head>
+<body>
+<div class="hdr">
+<h1>⚡ QUREO SOLVER</h1>
+<p>CONTROL PANEL // AUTOMATION TOOL</p>
+</div>
+
+<div class="card">
+<div class="status-row">
+<div class="dot-wrap"><div class="dot" id="dot"></div><span class="dot-label">المتصفح</span></div>
+<div class="badge" id="badge">جاهز</div>
+</div>
+<div class="prog-labels"><span>التقدم</span><span id="prog-label">0 / 0</span></div>
+<div class="prog-track"><div class="prog-fill" id="prog-fill"></div></div>
+<div class="pct" id="pct">0%</div>
+</div>
+
+<div class="card">
+<div class="card-title">⚙ الإعدادات</div>
+<label>المسار (الكورس)</label>
+<select id="courseId">
+<option value="javascript_ar">JavaScript Pro — javascript_ar</option>
+<option value="python_short_ar">Python — python_short_ar</option>
+</select>
+<label>أو اكتب معرّف كورس آخر (اختياري)</label>
+<input id="customCourse" type="text" placeholder="مثال: scratch_ar"/>
+<label>رقم الطالب (Student ID)</label>
+<input id="sid" type="text" placeholder="470692244" inputmode="numeric"/>
+<label>كلمة المرور</label>
+<input id="pw" type="password" placeholder="••••••••"/>
+<label>الانتظار بين كل مرحلة (ثانية)</label>
+<input id="delay" type="number" value="3" min="1" max="30"/>
+<button class="btn-solve" id="solve-btn" onclick="startSolver()">► حل المستويات الآن</button>
+<button class="btn-stop" id="stop-btn" onclick="stopSolver()">⏹ إيقاف</button>
+</div>
+
+<div class="card">
+<div class="card-title">📊 تقدّم الحل لحظياً</div>
+<div class="log-box" id="log"></div>
+</div>
+
+<div class="footer">QUREO · SOLVER · AUTO</div>
+
+<script>
+const ws = new WebSocket(`ws://${location.host}`);
+ws.onmessage = e => {
+  const d = JSON.parse(e.data);
+  if(d.type==='log') addLog(d.text,d.logType,d.ts);
+  if(d.type==='progress'){
+    document.getElementById('prog-fill').style.width=d.pct+'%';
+    document.getElementById('pct').textContent=d.pct+'%';
+    document.getElementById('prog-label').textContent=d.done+' / '+d.total;
+  }
+  if(d.type==='state'){
+    const badge=document.getElementById('badge');
+    const dot=document.getElementById('dot');
+    const btn=document.getElementById('solve-btn');
+    const stop=document.getElementById('stop-btn');
+    const map={running:{text:'جار الحل...',dc:'running'},done:{text:'اكتمل ✓',dc:'done'},stopped:{text:'موقوف',dc:''},error:{text:'خطأ',dc:''},ready:{text:'جاهز',dc:'ready'}};
+    const s=map[d.state]||{text:d.state,dc:''};
+    badge.textContent=s.text;badge.className='badge '+d.state;
+    dot.className='dot '+s.dc;
+    btn.disabled=(d.state==='running');
+    stop.className='btn-stop'+(d.state==='running'?' show':'');
+  }
+};
+
+function addLog(text,type,ts){
+  const box=document.getElementById('log');
+  const line=document.createElement('div');
+  line.className='ll';
+  line.innerHTML=`<span class="ts">${ts||''}</span><span class="lt ${type||'info'}">${text}</span>`;
+  box.appendChild(line);
+  box.scrollTop=box.scrollHeight;
+}
+
+async function startSolver(){
+  const custom=document.getElementById('customCourse').value.trim();
+  const courseId=custom||document.getElementById('courseId').value;
+  const studentId=document.getElementById('sid').value.trim();
+  const password=document.getElementById('pw').value;
+  const delay=parseInt(document.getElementById('delay').value)||3;
+  if(!studentId||!password){addLog('ادخل البيانات الناقصة','error');return;}
+  const res=await fetch('/api/start',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({studentId,password,courseId,delay})});
+  const data=await res.json();
+  if(!data.ok) addLog('✗ '+(data.error||'فشل'),'error');
+}
+
+async function stopSolver(){
+  await fetch('/api/stop',{method:'POST'});
+}
+
+addLog('في انتظار بدء الجولة...','info');
+</script>
+</body>
+</html>
