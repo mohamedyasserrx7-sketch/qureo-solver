@@ -6,24 +6,50 @@ const app=express();
 const server=http.createServer(app);
 const wss=new WebSocketServer({server});
 const SITE_PASSWORD='1q2w3e4r5t6y7u8i9o0p';
+const COOKIE_NAME='qureo_auth';
+
 app.use(express.json());
+
+function parseCookies(req){
+  const list={};
+  const rc=req.headers.cookie;
+  if(rc) rc.split(';').forEach(c=>{const p=c.split('=');list[p[0].trim()]=decodeURIComponent(p[1]||'');});
+  return list;
+}
+
+function isAuth(req){
+  const cookies=parseCookies(req);
+  return cookies[COOKIE_NAME]===SITE_PASSWORD;
+}
+
 app.use((req,res,next)=>{
-if(req.path==='/api/auth'||req.path==='/login.html')return next();
-const auth=req.headers['x-site-auth'];
-if(auth===SITE_PASSWORD)return next();
-if(req.path==='/'||req.path==='/index.html'){
-return res.sendFile(__dirname+'/public/login.html');
-}
-res.status(401).json({error:'غير مصرح'});
+  if(req.path==='/api/auth')return next();
+  if(req.path.startsWith('/api/')){
+    if(!isAuth(req))return res.status(401).json({error:'غير مصرح'});
+    return next();
+  }
+  if(!isAuth(req)){
+    return res.sendFile(__dirname+'/public/login.html');
+  }
+  next();
 });
+
 app.use(express.static('public'));
+
 app.post('/api/auth',(req,res)=>{
-if(req.body.password===SITE_PASSWORD){
-res.json({ok:true,token:SITE_PASSWORD});
-}else{
-res.status(401).json({error:'كلمة السر غلط'});
-}
+  if(req.body.password===SITE_PASSWORD){
+    res.setHeader('Set-Cookie',`${COOKIE_NAME}=${SITE_PASSWORD}; Path=/; HttpOnly; Max-Age=86400`);
+    res.json({ok:true});
+  }else{
+    res.status(401).json({error:'كلمة السر غلط'});
+  }
 });
+
+app.post('/api/logout',(req,res)=>{
+  res.setHeader('Set-Cookie',`${COOKIE_NAME}=; Path=/; Max-Age=0`);
+  res.json({ok:true});
+});
+
 let browser=null,page=null,running=false,clients=new Set();
 function broadcast(d){const m=JSON.stringify(d);clients.forEach(c=>{if(c.readyState===1)c.send(m);})}
 function log(t,type='info'){broadcast({type:'log',text:t,logType:type,ts:new Date().toLocaleTimeString('ar-EG')})}
