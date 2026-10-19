@@ -5,11 +5,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>QUREO Solver</title>
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap');
 *{box-sizing:border-box;margin:0;padding:0}
-:root{--bg:#080a0e;--bg2:#0d1117;--card:#111827;--card2:#161d2b;--border:#1e2d3d;--border2:#243447;--green:#a3f542;--green2:#7bc22e;--green-glow:rgba(163,245,66,.12);--green-glow2:rgba(163,245,66,.06);--text:#e2e8f0;--text2:#94a3b8;--text3:#475569;--inp:#0d1117;--pink:#f43f5e;--blue:#38bdf8}
+:root{--bg:#080a0e;--bg2:#0d1117;--card:#111827;--card2:#161d2b;--border:#1e2d3d;--border2:#243447;--green:#a3f542;--green2:#7bc22e;--green-glow:rgba(163,245,66,.12);--green-glow2:rgba(163,245,66,.06);--text:#e2e8f0;--text2:#94a3b8;--text3:#475569;--inp:#0d1117;--pink:#f43f5e;--blue:#38bdf8;--font:'Segoe UI',Tahoma,sans-serif}
 html,body{height:100%}
-body{background:var(--bg);color:var(--text);font-family:'Cairo',sans-serif;min-height:100vh;padding-bottom:20px}
+body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:100vh;padding-bottom:20px}
 ::-webkit-scrollbar{width:4px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:#1e2d3d;border-radius:2px}
 .header{background:rgba(8,10,14,.9);padding:16px 16px 0;position:sticky;top:0;z-index:100;backdrop-filter:blur(20px);border-bottom:1px solid rgba(30,45,61,.6)}
 .header-inner{display:flex;align-items:center;justify-content:space-between;padding-bottom:14px}
@@ -40,7 +39,7 @@ body{background:var(--bg);color:var(--text);font-family:'Cairo',sans-serif;min-h
 .prog-nums{font-size:12px;color:var(--text3)}
 .prog-track{width:100%;height:8px;background:var(--bg2);border-radius:4px;overflow:hidden;border:1px solid var(--border)}
 .prog-fill{height:100%;background:linear-gradient(90deg,var(--green),var(--green2));border-radius:4px;width:0%;transition:width .6s cubic-bezier(.4,0,.2,1);box-shadow:0 0 12px var(--green-glow)}
-.pct-big{font-size:48px;font-weight:900;color:var(--green);text-align:center;margin-top:10px;line-height:1;text-shadow:0 0 30px var(--green-glow);font-variant-numeric:tabular-nums}
+.pct-big{font-size:48px;font-weight:900;color:var(--green);text-align:center;margin-top:10px;line-height:1;text-shadow:0 0 30px var(--green-glow)}
 .badge{font-size:11px;padding:4px 12px;border-radius:20px;background:var(--bg2);border:1px solid var(--border);color:var(--text3);letter-spacing:.5px;transition:all .3s;white-space:nowrap}
 .badge.running{color:var(--green);border-color:rgba(163,245,66,.3)}
 .badge.done{color:var(--green);border-color:rgba(163,245,66,.3)}
@@ -50,7 +49,7 @@ body{background:var(--bg);color:var(--text);font-family:'Cairo',sans-serif;min-h
 .field-label{font-size:11px;color:var(--text3);letter-spacing:1px;margin-bottom:7px;display:flex;align-items:center;gap:5px}
 .input-wrap{position:relative}
 .input-icon{position:absolute;right:13px;top:50%;transform:translateY(-50%);font-size:14px;color:var(--text3);pointer-events:none}
-input,select{width:100%;padding:12px 13px;background:var(--inp);border:1px solid var(--border);border-radius:10px;color:var(--text);font-size:14px;outline:none;transition:border .15s,box-shadow .15s;-webkit-appearance:none;font-family:'Cairo',sans-serif}
+input,select{width:100%;padding:12px 13px;background:var(--inp);border:1px solid var(--border);border-radius:10px;color:var(--text);font-size:14px;outline:none;transition:border .15s,box-shadow .15s;-webkit-appearance:none;font-family:var(--font)}
 .has-icon input,.has-icon select{padding-right:40px}
 input:focus,select:focus{border-color:var(--green);box-shadow:0 0 0 3px var(--green-glow2)}
 input::placeholder{color:var(--text3)}
@@ -62,26 +61,26 @@ select option{background:#111827}
 .course-opt-name{font-size:12px;font-weight:700;color:var(--text);margin-bottom:3px}
 .course-opt-id{font-size:10px;color:var(--text3);direction:ltr}
 .divider{height:1px;background:var(--border);margin:14px 0}
-.btn-primary{width:100%;padding:14px;background:var(--green);border:none;border-radius:10px;color:#080a0e;font-size:15px;font-weight:900;cursor:pointer;font-family:'Cairo',sans-serif;letter-spacing:.5px;transition:all .15s;display:flex;align-items:center;justify-content:center;gap:8px;box-shadow:0 4px 20px var(--green-glow)}
+.btn-primary{width:100%;padding:14px;background:var(--green);border:none;border-radius:10px;color:#080a0e;font-size:15px;font-weight:900;cursor:pointer;font-family:var(--font);letter-spacing:.5px;transition:all .15s;display:flex;align-items:center;justify-content:center;gap:8px;box-shadow:0 4px 20px var(--green-glow)}
 .btn-primary:hover{opacity:.9;transform:translateY(-1px)}
 .btn-primary:active{transform:scale(.98)}
 .btn-primary:disabled{background:var(--card2);color:var(--text3);cursor:not-allowed;box-shadow:none;transform:none}
 .btn-primary.loading::after{content:'';width:14px;height:14px;border:2px solid rgba(0,0,0,.2);border-top-color:#000;border-radius:50%;animation:spin .7s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
-.btn-stop{width:100%;padding:12px;background:transparent;border:1px solid rgba(244,63,94,.3);border-radius:10px;color:var(--pink);font-size:14px;font-weight:700;cursor:pointer;font-family:'Cairo',sans-serif;margin-top:10px;display:none;transition:all .15s}
+.btn-stop{width:100%;padding:12px;background:transparent;border:1px solid rgba(244,63,94,.3);border-radius:10px;color:var(--pink);font-size:14px;font-weight:700;cursor:pointer;font-family:var(--font);margin-top:10px;display:none;transition:all .15s}
 .btn-stop:hover{background:rgba(244,63,94,.06)}
 .btn-stop.show{display:block}
 .log-box{background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:12px;height:200px;overflow-y:auto;font-size:12px;font-family:monospace;direction:rtl}
-.log-empty{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;gap:8px;color:var(--text3);font-size:12px;font-family:'Cairo',sans-serif}
+.log-empty{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;gap:8px;color:var(--text3);font-size:12px;font-family:var(--font)}
 .log-empty-icon{font-size:26px;opacity:.4}
 .ll{margin-bottom:7px;display:flex;gap:8px;align-items:flex-start}
 .ts{color:var(--text3);white-space:nowrap;font-size:10px;padding-top:1px;flex-shrink:0}
 .lt.info{color:var(--text3)}.lt.success{color:var(--green)}.lt.warn{color:#fbbf24}.lt.error{color:var(--pink)}
 .logout-row{display:flex;justify-content:center;padding:4px 0}
-.logout-btn{font-size:11px;color:var(--text3);cursor:pointer;background:none;border:none;font-family:'Cairo',sans-serif;text-decoration:underline;text-underline-offset:3px;padding:4px}
+.logout-btn{font-size:11px;color:var(--text3);cursor:pointer;background:none;border:none;font-family:var(--font);text-decoration:underline;text-underline-offset:3px;padding:4px}
 .logout-btn:hover{color:var(--text2)}
 .footer{text-align:center;font-size:9px;color:var(--border2);letter-spacing:4px;padding:6px 0 12px}
-.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--card);border:1px solid var(--border);border-radius:10px;padding:12px 20px;font-size:13px;color:var(--text);white-space:nowrap;z-index:999;transition:transform .3s cubic-bezier(.4,0,.2,1),opacity .3s;opacity:0;font-family:'Cairo',sans-serif;box-shadow:0 8px 30px rgba(0,0,0,.4)}
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--card);border:1px solid var(--border);border-radius:10px;padding:12px 20px;font-size:13px;color:var(--text);white-space:nowrap;z-index:999;transition:transform .3s cubic-bezier(.4,0,.2,1),opacity .3s;opacity:0;font-family:var(--font);box-shadow:0 8px 30px rgba(0,0,0,.4)}
 .toast.show{transform:translateX(-50%) translateY(0);opacity:1}
 .toast.success{border-color:rgba(163,245,66,.3);color:var(--green)}
 .toast.error{border-color:rgba(244,63,94,.3);color:var(--pink)}
@@ -104,7 +103,6 @@ select option{background:#111827}
 </div>
 </div>
 </div>
-
 <div class="main">
 <div class="card">
 <div class="card-header">
@@ -130,7 +128,6 @@ select option{background:#111827}
 <div class="prog-track"><div class="prog-fill" id="prog-fill"></div></div>
 <div class="pct-big" id="pct">0%</div>
 </div>
-
 <div class="card">
 <div class="card-header">
 <div class="card-title">⚙️ الإعدادات</div>
@@ -180,7 +177,6 @@ select option{background:#111827}
 <button class="btn-primary" id="solve-btn" onclick="startSolver()"><span>▶ حل المستويات الآن</span></button>
 <button class="btn-stop" id="stop-btn" onclick="stopSolver()">⏹ إيقاف العملية</button>
 </div>
-
 <div class="card">
 <div class="card-header">
 <div class="card-title">📋 سجل العمليات</div>
@@ -192,15 +188,12 @@ select option{background:#111827}
 </div>
 </div>
 </div>
-
 <div class="logout-row">
 <button class="logout-btn" onclick="logout()">تسجيل الخروج</button>
 </div>
 <div class="footer">QUREO · SOLVER · 2026</div>
 </div>
-
 <div class="toast" id="toast"></div>
-
 <script>
 const TOKEN=localStorage.getItem('site-auth');
 if(!TOKEN) location.href='/login.html';
